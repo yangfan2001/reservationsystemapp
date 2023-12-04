@@ -12,6 +12,10 @@ const RegisterCard: React.FC = () => {
   const [confirmPassword, setConfirmPassword] = useState('');
 
   const handleRegister = () => {
+    if (password !== confirmPassword) {
+      alert('Passwords do not match');
+      return;
+    }
     // Handle register logic here
     console.log(username, password, confirmPassword);
   };

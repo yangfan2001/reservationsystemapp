@@ -1,10 +1,9 @@
 import React from 'react';
-import ReservationForm from '../components/reservationForm';
-
+import UserInfo from './user/userInfo';
 export default function HomePage() {
     return (
         <div>
-            <ReservationForm />
+            123
         </div>
     );
 }

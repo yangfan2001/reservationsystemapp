@@ -1,6 +1,7 @@
 import React from "react";
 import { useEffect,useState } from "react";
 import { Box, Button, Table, TableBody, TableCell, TableHead, TableRow, Paper, Dialog, DialogActions, DialogContent, DialogTitle, TextField } from '@mui/material';
+import DataTable from "../../components/dataTable";
 
 const initialTables = [
     { id: 1, reservations: [] },
@@ -90,6 +91,8 @@ export default function AdminPage() {
         <Table component={Paper}>
           {/* ...同上，列出所有预约和操作按钮... */}
         </Table>
+
+        <DataTable/>
   
         <Dialog open={isDialogOpen} onClose={handleCloseDialog}>
           <DialogTitle>Add a New Table</DialogTitle>

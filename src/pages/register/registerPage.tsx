@@ -8,7 +8,7 @@ export default function RegisterPage() {
             display: 'flex',
             justifyContent: 'center',
             alignItems: 'center',
-            height: '100vh' // 视口高度
+            height: '100vh'
           }}>
             <RegisterCard/>
         </Box>

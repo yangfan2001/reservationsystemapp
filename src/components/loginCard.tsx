@@ -5,14 +5,19 @@ import TextField from '@mui/material/TextField';
 import Button from '@mui/material/Button';
 import Typography from '@mui/material/Typography';
 import Link from '@mui/material/Link';
+import Select from '@mui/material/Select';
+import MenuItem from '@mui/material/MenuItem';
+import InputLabel from '@mui/material/InputLabel';
+import FormControl from '@mui/material/FormControl';
 
 const LoginCard: React.FC = () => {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
+  const [loginType, setLoginType] = useState('customer');
 
   const handleLogin = () => {
     // Handle login logic here
-    console.log(username, password);
+    console.log(username, password, loginType);
   };
 
   return (
@@ -28,6 +33,19 @@ const LoginCard: React.FC = () => {
             fontWeight: 'bold'}}>
           Log In
         </Typography>
+
+        <FormControl fullWidth margin="normal">
+          <InputLabel>Login As</InputLabel>
+          <Select
+            value={loginType}
+            label="Login As"
+            onChange={(e) => setLoginType(e.target.value)}
+          >
+            <MenuItem value={'customer'}>Customer</MenuItem>
+            <MenuItem value={'restaurant'}>Restaurant</MenuItem>
+          </Select>
+        </FormControl>
+
         <TextField 
           label="Username" 
           variant="outlined" 

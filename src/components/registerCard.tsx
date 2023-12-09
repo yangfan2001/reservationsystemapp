@@ -5,11 +5,16 @@ import TextField from '@mui/material/TextField';
 import Button from '@mui/material/Button';
 import Typography from '@mui/material/Typography';
 import Link from '@mui/material/Link';
+import Select from '@mui/material/Select';
+import MenuItem from '@mui/material/MenuItem';
+import InputLabel from '@mui/material/InputLabel';
+import FormControl from '@mui/material/FormControl';
 
 const RegisterCard: React.FC = () => {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
+  const [registerType, setRegisterType] = useState('customer');
 
   const handleRegister = () => {
     if (password !== confirmPassword) {
@@ -17,7 +22,7 @@ const RegisterCard: React.FC = () => {
       return;
     }
     // Handle register logic here
-    console.log(username, password, confirmPassword);
+    console.log(username, password, confirmPassword, registerType);
   };
 
   return (
@@ -33,6 +38,19 @@ const RegisterCard: React.FC = () => {
             fontWeight: 'bold'}}>
           Register
         </Typography>
+
+        <FormControl fullWidth margin="normal">
+          <InputLabel>Register As</InputLabel>
+          <Select
+            value={registerType}
+            label="Register As"
+            onChange={(e) => setRegisterType(e.target.value)}
+          >
+            <MenuItem value={'customer'}>Customer</MenuItem>
+            <MenuItem value={'restaurant'}>Restaurant</MenuItem>
+          </Select>
+        </FormControl>
+
         <TextField 
           label="Username" 
           variant="outlined" 

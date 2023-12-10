@@ -7,12 +7,13 @@ import Button from '@mui/material/Button';
 import IconButton from '@mui/material/IconButton';
 import MenuIcon from '@mui/icons-material/Menu';
 import { useNavigate } from "react-router-dom";
+import constants from "../../constants";
 
 export default function ButtonAppBar() {
   const navigate = useNavigate();
   return (
     <Box sx={{ flexGrow: 1 }}>
-      <AppBar position="static">
+      <AppBar position="static"  sx={{ backgroundColor: constants.BACKGROUND_COLOR}}>
         <Toolbar>
           <IconButton
             size="large"

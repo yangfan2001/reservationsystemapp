@@ -9,82 +9,92 @@ import Select from '@mui/material/Select';
 import MenuItem from '@mui/material/MenuItem';
 import InputLabel from '@mui/material/InputLabel';
 import FormControl from '@mui/material/FormControl';
+import constants from '../constants';
 
 const RegisterCard: React.FC = () => {
+  const [email, setEmail] = useState('');
   const [username, setUsername] = useState('');
+  const [restaurantName, setRestaurantName] = useState('');
   const [password, setPassword] = useState('');
-  const [confirmPassword, setConfirmPassword] = useState('');
   const [registerType, setRegisterType] = useState('customer');
 
-  const handleRegister = () => {
-    if (password !== confirmPassword) {
-      alert('Passwords do not match');
-      return;
-    }
+  const handleRegister = (event: React.FormEvent) => {
+    event.preventDefault(); // 阻止默认表单提交行为
     // Handle register logic here
-    console.log(username, password, confirmPassword, registerType);
+    console.log(email, username, restaurantName, password, registerType);
   };
 
   return (
-    <Card sx={{ 
-        maxWidth: 345,
-        boxShadow: 3, 
-        borderRadius: 2, 
-        bgcolor: 'background.paper', 
-    }}>
+    <Card sx={{ maxWidth: 345, boxShadow: 3, borderRadius: 2, bgcolor: 'background.paper' }}>
       <CardContent>
-        <Typography variant="h5" component="div" 
-        sx={{textAlign:'center', fontFamily: 'Arial',
-            fontWeight: 'bold'}}>
+        <Typography variant="h5" component="div" sx={{ textAlign: 'center', fontFamily: 'Arial', fontWeight: 'bold' }}>
           Register
         </Typography>
 
-        <FormControl fullWidth margin="normal">
-          <InputLabel>Register As</InputLabel>
-          <Select
-            value={registerType}
-            label="Register As"
-            onChange={(e) => setRegisterType(e.target.value)}
-          >
-            <MenuItem value={'customer'}>Customer</MenuItem>
-            <MenuItem value={'restaurant'}>Restaurant</MenuItem>
-          </Select>
-        </FormControl>
+        <form onSubmit={handleRegister}>
+          <FormControl fullWidth margin="normal">
+            <InputLabel>Register As</InputLabel>
+            <Select
+              value={registerType}
+              label="Register As"
+              onChange={(e) => setRegisterType(e.target.value as string)}
+            >
+              <MenuItem value={'customer'}>Customer</MenuItem>
+              <MenuItem value={'restaurant'}>Restaurant</MenuItem>
+            </Select>
+          </FormControl>
 
-        <TextField 
-          label="Username" 
-          variant="outlined" 
-          fullWidth 
-          margin="normal"
-          value={username}
-          onChange={(e) => setUsername(e.target.value)}
-        />
-        <TextField 
-          label="Password" 
-          type="password"
-          variant="outlined" 
-          fullWidth 
-          margin="normal"
-          value={password}
-          onChange={(e) => setPassword(e.target.value)}
-        />
-        <TextField 
-          label="Confirm Password" 
-          type="password"
-          variant="outlined" 
-          fullWidth 
-          margin="normal"
-          value={confirmPassword}
-          onChange={(e) => setConfirmPassword(e.target.value)}
-        />
-        <Button 
-          variant="contained" 
-          fullWidth 
-          onClick={handleRegister}
-          sx={{ mt: 2 }}
-        >
-          Register
-        </Button>
+          <TextField 
+            label="Email" 
+            variant="outlined" 
+            fullWidth 
+            margin="normal"
+            required
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+          />
+          {registerType === 'customer' && (
+            <TextField 
+              label="Username" 
+              variant="outlined" 
+              fullWidth 
+              margin="normal"
+              required
+              value={username}
+              onChange={(e) => setUsername(e.target.value)}
+            />
+          )}
+          {registerType === 'restaurant' && (
+            <TextField 
+              label="Restaurant Name" 
+              variant="outlined" 
+              fullWidth 
+              margin="normal"
+              required
+              value={restaurantName}
+              onChange={(e) => setRestaurantName(e.target.value)}
+            />
+          )}
+          <TextField 
+            label="Password" 
+            type="password"
+            variant="outlined" 
+            fullWidth 
+            margin="normal"
+            required
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+          />
+          <Button 
+            type="submit" 
+            variant="contained" 
+            fullWidth 
+            sx={{ backgroundColor: constants.BUTTON_COLOR, '&:hover': { backgroundColor: constants.BUTTON_COLOR_HOVER } }} 
+          >
+            Register
+          </Button>
+        </form>
+
         <Typography variant="body2" sx={{ mt: 2, textAlign: 'center' }}>
           Already have an account? <Link href="/login">Login</Link>
         </Typography>

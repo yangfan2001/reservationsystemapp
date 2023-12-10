@@ -92,7 +92,7 @@ export default function AdminPage() {
           {/* ...同上，列出所有预约和操作按钮... */}
         </Table>
 
-        <DataTable/>
+        <DataTable rows={[]} columns={[]}/>
   
         <Dialog open={isDialogOpen} onClose={handleCloseDialog}>
           <DialogTitle>Add a New Table</DialogTitle>

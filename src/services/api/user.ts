@@ -9,5 +9,9 @@ export const userLogin = (email:String,password:String) =>{
 }
 
 export const userRegister = (name:String,email:String,password:String) =>{
-
+    return axios.post(`${constants.CUSTOMER_ENDPOINT_URL}/register`,{
+        name,
+        email,
+        password
+    })
 }

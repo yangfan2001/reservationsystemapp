@@ -6,28 +6,37 @@ import RegisterPage from '../pages/register/registerPage';
 import AdminPage from '../pages/admin/adminPage';
 import RestaurantPage from '../pages/Restaurant/restaurantList';
 import ProtectedRoute from './ProtectedRoutes';
-const AllRoutes:React.FC = () =>{
+import RestaurantDetailPage from '../pages/Restaurant/restaurantDetail';
+
+const AllRoutes: React.FC = () => {
     return (
-      <Routes>
-          <Route path="/login" element={<LoginPage />} />
-          <Route path="/register" element={<RegisterPage />} />
-          <Route path="/" element={
-              <ProtectedRoute>
-                  <HomePage />
-              </ProtectedRoute>
-          } />
-          <Route path="/admin" element={
-              <ProtectedRoute>
-                  <AdminPage />
-              </ProtectedRoute>
-          } />
-          <Route path="/restaurants" element={
-              <ProtectedRoute>
-                  <RestaurantPage />
-              </ProtectedRoute>
-          } />
-          <Route path="*" element={<h1>Not Found</h1>} />
-      </Routes>
+        <Routes>
+            <Route path="/login" element={<LoginPage />} />
+            <Route path="/register" element={<RegisterPage />} />
+            <Route path="/" element={
+                <ProtectedRoute>
+                    <HomePage />
+                </ProtectedRoute>
+            } />
+            <Route path="/admin" element={
+                <ProtectedRoute>
+                    <AdminPage />
+                </ProtectedRoute>
+            } />
+            <Route path="/restaurants" element={
+                <ProtectedRoute>
+                    <RestaurantPage />
+                </ProtectedRoute>
+            } />
+
+            <Route path="/restaurant/:restaurantId" element={
+                <ProtectedRoute>
+                    <RestaurantDetailPage />
+                </ProtectedRoute>
+            } />
+
+            <Route path="*" element={<h1>Not Found</h1>} />
+        </Routes>
     )
 }
 

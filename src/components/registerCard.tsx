@@ -10,6 +10,9 @@ import MenuItem from '@mui/material/MenuItem';
 import InputLabel from '@mui/material/InputLabel';
 import FormControl from '@mui/material/FormControl';
 import constants from '../constants';
+import { userRegister } from '../services/api/user';
+import { restaurantRegister } from '../services/api/restaurant';
+import { useNavigate } from 'react-router-dom';
 
 const RegisterCard: React.FC = () => {
   const [email, setEmail] = useState('');
@@ -17,10 +20,27 @@ const RegisterCard: React.FC = () => {
   const [restaurantName, setRestaurantName] = useState('');
   const [password, setPassword] = useState('');
   const [registerType, setRegisterType] = useState('customer');
+  const navigate = useNavigate();
 
   const handleRegister = (event: React.FormEvent) => {
     event.preventDefault(); // 阻止默认表单提交行为
-    // Handle register logic here
+    if (registerType === 'customer') {
+      userRegister(username,email, password).then((res) => {
+        if (res.status === 200) {
+          navigate('/login');
+        }
+      }).catch((err) => {
+        
+      });
+    } else {
+      restaurantRegister(restaurantName, email, password).then((res) => {
+        if (res.status === 200) {
+          navigate('/login');
+        }
+      }).catch((err) => {
+
+      });
+    }
     console.log(email, username, restaurantName, password, registerType);
   };
 

@@ -15,3 +15,8 @@ export const restaurantRegister = async (name: string, email: string, password: 
         password
     })
 }
+
+
+export const getAllRestaurants = async () => {
+    return axios.get(`${constants.RESTAURANT_ENDPOINT_URL}/all`)
+}

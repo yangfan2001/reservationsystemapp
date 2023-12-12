@@ -1,110 +1,113 @@
-import React from "react";
-import { useEffect,useState } from "react";
-import { Box, Button, Table, TableBody, TableCell, TableHead, TableRow, Paper, Dialog, DialogActions, DialogContent, DialogTitle, TextField } from '@mui/material';
+import React, { useState } from "react";
+import {
+  Box, Button, Dialog, DialogActions, DialogContent,
+  DialogTitle, TextField, Grid, Typography, Paper
+} from '@mui/material';
 import DataTable from "../../components/dataTable";
+import { tr } from "date-fns/locale";
 
-const initialTables = [
-    { id: 1, reservations: [] },
-    // ...其他桌位
-  ];
-  
-  const initialReservations = [
-    { id: 1, tableId: 1, time: '18:00', status: 'pending' },
-    // ...其他预约
-  ];
+interface Table {
+  id: number;
+  reservations: Reservation[];
+}
 
+interface Reservation {
+  id: number;
+  tableId: number;
+  time: string;
+  status: string;
+}
 
-  
+const initialTables: Table[] = [
+  { id: 1, reservations: [] },
+  // ...其他桌位
+];
+
+const initialReservations: Reservation[] = [
+  { id: 1, tableId: 1, time: '18:00', status: 'pending' },
+  // ...其他预约
+];
+
+interface Column {
+  field: string;
+  headerName: string;
+  width: number;
+  renderCell?: (params: any) => JSX.Element;
+}
+
 export default function AdminPage() {
-    const [tables, setTables] = useState(initialTables);
-  const [reservations, setReservations] = useState(initialReservations);
-  const [isDialogOpen, setIsDialogOpen] = useState(false);
+  const [tables, setTables] = useState<Table[]>(initialTables);
+  const [reservations, setReservations] = useState<Reservation[]>(initialReservations);
+  const [isAddDialogOpen, setIsAddDialogOpen] = useState(false);
+  const [isYesOrNoDialogOpen, setIsYesOrNoDialogOpen] = useState(false);
 
-
-  // 添加新桌位
   const addNewTable = () => {
-    handleOpenDialog();
-    const newTable = { id: tables.length + 1, reservations: [] };
-    setTables([...tables, newTable]);
-  };
+    setIsAddDialogOpen(true);
+  }
 
-  // 删除桌位
-  const removeTable = (tableId: number) => {
-    setTables(tables.filter(table => table.id !== tableId));
-  };
-
-  // 打开添加桌位对话框
-  const handleOpenDialog = () => {
-    setIsDialogOpen(true);
-  };
-
-  // 关闭添加桌位对话框
   const handleCloseDialog = () => {
-    setIsDialogOpen(false);
-  };
+    setIsAddDialogOpen(false);
+  }
 
-  // 更新预约状态
-  const updateReservationStatus = (reservationId:number, status:string) => {
-    setReservations(
-      reservations.map(reservation => 
-        reservation.id === reservationId ? { ...reservation, status } : reservation
-      )
-    );
-  };
+  const removeTable = (tableId: number) => {
+    // ... remove table logic
+  }
+
+  // Define your columns here with proper TypeScript types
+  const tableColumns: Column[] = [
+    { field: 'id', headerName: 'Table ID', width: 150 },
+    { field: 'reservations', headerName: 'Reservations', width: 150, renderCell: (params) => <span>{params.value.length}</span> },
+    { field: 'actions', headerName: 'Actions', width: 150, renderCell: (params) => <Button onClick={() => removeTable(params.value)}>Remove</Button> }
+  ];
+
+  const reservationColumns: Column[] = [
+    { field: 'id', headerName: 'Reservation ID', width: 150 },
+    { field: 'time', headerName: 'Time', width: 150 },
+    { field: 'status', headerName: 'Status', width: 150 },
+    // ... other columns for reservations
+  ];
 
 
-    useEffect(() => {
-        /*
-        // get user role from session storage
-        const role = sessionStorage.getItem("role");
-        if (role !== "admin") {
-            window.location.href = "/";
-        }*/
-    }, []); 
-    return (
-        <Box>
-        <Button onClick={addNewTable}>Add New Table</Button>
-        <Table component={Paper}>
-          <TableHead>
-            <TableRow>
-              <TableCell>Table ID</TableCell>
-              <TableCell align="right">Reservations</TableCell>
-              <TableCell align="right">Actions</TableCell>
-            </TableRow>
-          </TableHead>
-          <TableBody>
-            {tables.map((table) => (
-              <TableRow key={table.id}>
-                <TableCell component="th" scope="row">
-                  {table.id}
-                </TableCell>
-                <TableCell align="right">{table.reservations.length}</TableCell>
-                <TableCell align="right">
-                  <Button onClick={() => removeTable(table.id)}>Remove</Button>
-                </TableCell>
-              </TableRow>
-            ))}
-          </TableBody>
-        </Table>
-  
-        <h2>Reservations</h2>
-        <Table component={Paper}>
-          {/* ...同上，列出所有预约和操作按钮... */}
-        </Table>
+  // ... (rest of your component logic)
 
-        <DataTable rows={[]} columns={[]}/>
-  
-        <Dialog open={isDialogOpen} onClose={handleCloseDialog}>
-          <DialogTitle>Add a New Table</DialogTitle>
-          <DialogContent>
-            <TextField autoFocus margin="dense" label="Table Name" fullWidth />
-            <TextField autoFocus margin="dense" label="Table size" fullWidth />
-          </DialogContent>
-          <DialogActions>
-            <Button onClick={handleCloseDialog}>Cancel</Button>
-            <Button onClick={handleCloseDialog}>Add</Button>
-          </DialogActions>
-        </Dialog>
-      </Box>
-    )
+  return (
+    <Box sx={{ flexGrow: 1, padding: '0 64px' }}> {/* Add padding to the container */}
+      <Grid container spacing={3}>
+        {/* Table Grid Item */}
+        <Grid item xs={12} md={6} sx={{ paddingRight: '8px' }}> {/* Adjust right padding for left item */}
+          <Box display="flex" justifyContent="space-between" alignItems="center">
+            <h2>Restaurant Tables</h2>
+            <Button variant="contained" color="primary" onClick={addNewTable}>
+              Add New Table
+            </Button>
+          </Box>
+          <Paper>
+            <DataTable rows={tables} columns={tableColumns} />
+          </Paper>
+        </Grid>
+
+        {/* Reservation Grid Item */}
+        <Grid item xs={12} md={6} sx={{ paddingLeft: '8px' }}> {/* Adjust left padding for right item */}
+          <Box display="flex" justifyContent="space-between" alignItems="center">
+            <h2>Reservations</h2>
+            {/* If there's a button for reservations, add it here */}
+          </Box>
+          <Paper>
+            <DataTable rows={reservations} columns={reservationColumns} />
+          </Paper>
+        </Grid>
+      </Grid>
+      <Dialog open={isAddDialogOpen} onClose={handleCloseDialog}>
+        <DialogTitle>Add a New Table</DialogTitle>
+        <DialogContent>
+          <TextField autoFocus margin="dense" label="Table Name" fullWidth />
+          <TextField autoFocus margin="dense" label="Table Size" fullWidth />
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={handleCloseDialog}>Cancel</Button>
+          <Button onClick={handleCloseDialog}>Add</Button>
+        </DialogActions>
+      </Dialog>
+    </Box>
+  );
 }

@@ -23,7 +23,7 @@ export default function ButtonAppBar() {
   const handleLogout = () => {
     sessionStorage.removeItem("token");
     sessionStorage.removeItem("role");
-    navigate("/");
+    navigate("/login");
     setOpenDialog(false);
   };
 

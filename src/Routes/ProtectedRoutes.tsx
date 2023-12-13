@@ -1,44 +1,35 @@
-import React, { ReactNode, useEffect, useState, SyntheticEvent } from 'react';
-import { Navigate, useLocation } from 'react-router-dom';
-import Snackbar from '@mui/material/Snackbar';
-import Alert, { AlertProps } from '@mui/material/Alert';
+import React, { ReactNode, useEffect, useState } from 'react';
+import { useLocation } from 'react-router-dom';
+import { useSnackbar } from '../components/SnackbarProvier';
 
 interface ProtectedRouteProps {
     children: ReactNode;
 }
+const RESTAURANT_PAGE  = ['/admin']
 
 const ProtectedRoute: React.FC<ProtectedRouteProps> = ({ children }) => {
     const location = useLocation();
-    const [openSnackbar, setOpenSnackbar] = useState(false);
-
-    const isAuthenticated = true; // Replace with your authentication logic
+    const isAuthenticated = sessionStorage.getItem('token') !== null;
+    const role = sessionStorage.getItem('role');
     const isLoginPage = location.pathname === '/login' || location.pathname === '/register';
+    const snackbar = useSnackbar();
 
+    const handleError = () =>{
+        snackbar('You are not authorized to access this page','error');
+        window.location.href = '/login'
+    }
     useEffect(() => {
         if (!isAuthenticated && !isLoginPage) {
-            setOpenSnackbar(true);
+            handleError();
+        }
+        if(role){
+            if(role === 'customer' && location.pathname === '/admin'){
+                handleError();
+            }else if (role === 'restaurant' && location.pathname != '/admin'){
+                handleError();
+            }
         }
     }, [isAuthenticated, isLoginPage]);
-
-    const handleSnackbarClose = () => {
-        setOpenSnackbar(false);
-    };
-
-    const handleAlertClose = (event: React.SyntheticEvent<Element, Event>, reason?: string) => {
-        setOpenSnackbar(false);
-    };
-
-    if (!isAuthenticated && !isLoginPage) {
-        return (
-            <>
-                <Snackbar open={openSnackbar} autoHideDuration={6000} onClose={handleSnackbarClose}>
-                    <Alert onClose={handleAlertClose} severity="error" sx={{ width: '100%' }}>
-                        You do not have permission to view this page
-                    </Alert>
-                </Snackbar>
-            </>
-        );
-    }
 
     return <>{children}</>;
 };

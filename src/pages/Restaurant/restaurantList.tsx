@@ -1,13 +1,29 @@
 import React, { useState, useEffect } from 'react';
-import { DataGrid } from '@mui/x-data-grid';
-import { Container } from '@mui/material';
+import { GridRenderCellParams } from '@mui/x-data-grid';
+import { Container, Link } from '@mui/material';
 import DataTable from '../../components/dataTable';
-import { getAllRestaurants
- } from '../../services/api/restaurant';
-const colunms = [
-    { field: 'name', headerName: 'Name', width: 200 },
-    { field: 'email', headerName: 'Contact-Email', width: 200 },
-]
+import {
+    getAllRestaurants
+} from '../../services/api/restaurant';
+const columns = [
+    {
+        field: 'name',
+        headerName: 'Restaurant Name',
+        width: 300,
+        renderCell: (params: GridRenderCellParams) => {
+            return (
+                <Link href={`/restaurant/${params.id}`}>
+                    {params.value as string}
+                </Link>
+            );
+        }
+    },
+    {
+        field: 'email',
+        headerName: 'Contact-Email',
+        width: 400
+    }
+];
 type RestaurantType = {
     restaurantId: string;
     name: string;
@@ -22,10 +38,10 @@ export default function RestaurantList() {
     const [restaurants, setRestaurants] = useState<RestaurantListRowType[]>([]);
     useEffect(() => {
         const fetchData = async () => {
-            try{
+            try {
                 const res = await getAllRestaurants();
                 const tmp: RestaurantListRowType[] = [];
-                res.data.restaurants.forEach((restaurant:RestaurantType) => {
+                res.data.restaurants.forEach((restaurant: RestaurantType) => {
                     tmp.push({
                         id: restaurant.restaurantId,
                         name: restaurant.name,
@@ -33,7 +49,7 @@ export default function RestaurantList() {
                     })
                 })
                 setRestaurants(tmp as RestaurantListRowType[]);
-            }catch(err){
+            } catch (err) {
                 console.log(err);
             }
         }
@@ -41,7 +57,7 @@ export default function RestaurantList() {
     }, []);
     return (
         <Container>
-           <DataTable rows={restaurants} columns={colunms}/>
+            <DataTable rows={restaurants} columns={columns} />
         </Container>
     );
 }

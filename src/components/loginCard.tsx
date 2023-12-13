@@ -47,7 +47,7 @@ const LoginCard: React.FC = () => {
        });
     } else {
       restaurantLogin(email, password).then((res) => {
-        if (res.data.success) {
+        if (res.status === 200) {
           const token = res.data.token;
           sessionStorage.setItem('role', 'restaurant');
           sessionStorage.setItem('token', token);

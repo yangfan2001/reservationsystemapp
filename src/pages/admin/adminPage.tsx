@@ -8,6 +8,9 @@ import DataTable from "../../components/dataTable";
 import { getRestaurantTables, deleteRestaurantTable, addRestaurantTable } from "../../services/api/restaurantTable";
 import { useSnackbar } from "../../components/SnackbarProvier";
 import { blueGrey } from "@mui/material/colors";
+import { getReservationsByRestaurantId } from "../../services/api/reservation";
+import dayjs from 'dayjs';
+import { Cancel } from "@mui/icons-material";
 
 
 interface Table {
@@ -24,8 +27,6 @@ interface Reservation {
 }
 
 const initialReservations: Reservation[] = [
-  { id: 1, tableId: 1, time: '18:00', status: 'pending' },
-  // ...其他预约
 ];
 
 interface Column {
@@ -46,6 +47,7 @@ export default function AdminPage() {
   const [confirmDialogType, setConfirmDialogType] = useState("");
   const [confirmDialogText, setConfirmDialogText] = useState("");
   const [toRemoveTableId, setToRemoveTableId] = useState<number>(0);
+  const [toRemoveReservationId, setToRemoveReservationId] = useState<number>(0);
 
 
 
@@ -55,13 +57,18 @@ export default function AdminPage() {
 
   useEffect(() => {
     const fetchTables = async () => {
-      const response = await getRestaurantTables();
-      const tables = response.data;
+      const [tableResponse, reservationResponse] = await Promise.all([getRestaurantTables(), getReservationsByRestaurantId()]);
+      const tables = tableResponse.data;
       const tmp: Table[] = []
       for (let table of tables) {
         tmp.push({ id: table.table_id, size: table.size, description: table.description })
       }
       setTables(tmp);
+      const tmpReservations: Reservation[] = [];
+      for (let reservation of reservationResponse.data.reservations) {
+        tmpReservations.push({ id: reservation.reservationId, tableId: reservation.tableId, time: reservation.reservationTime, status: reservation.status });
+      }
+      setReservations(tmpReservations);
     }
     fetchTables();
   }, [showSnackbar]);
@@ -99,8 +106,19 @@ export default function AdminPage() {
           showSnackbar("Delete table failed", "error",);
         }
       })
+    }else if (confirmDialogType === "cancelReservation") {
+      console.log("cancel reservation", toRemoveReservationId);
+      // ... cancel reservation logic
     }
     setIsConfirmDialogOpen(false)
+  }
+
+  const handleCancelReservation = (reservationId: number) => {
+    console.log("cancel reservation", reservationId);
+    setToRemoveReservationId(reservationId);
+    setConfirmDialogType("cancelReservation");
+    setConfirmDialogText("Are you sure you want to cancel this reservation?");
+    setIsConfirmDialogOpen(true);
   }
 
   const removeTable = (tableId: number) => {
@@ -121,10 +139,22 @@ export default function AdminPage() {
   ];
 
   const reservationColumns: Column[] = [
-    { field: 'id', headerName: 'Reservation ID', width: 150 },
-    { field: 'time', headerName: 'Time', width: 150 },
+    { field: 'tableId', headerName: 'Table ID', width: 80 },
+    { field: 'time', headerName: 'Time', width: 150, 
+    renderCell: (params) => {
+      const formattedTime = dayjs(params.row.time).format('YYYY-MM-DD HH:mm:ss');
+      return <span>{formattedTime}</span>;
+    } },
     { field: 'status', headerName: 'Status', width: 150 },
-    // ... other columns for reservations
+    { field: 'actions', headerName: 'Actions', width: 150, 
+    renderCell: (params) => {
+      if (params.row.status === "PENDING" || params.row.status === "NO SHOW") {
+        return <Button onClick={() => handleCancelReservation(params.row.id)}>Cancel</Button>
+      } else {
+        return <></>
+      }
+    } },
+    
   ];
 
 

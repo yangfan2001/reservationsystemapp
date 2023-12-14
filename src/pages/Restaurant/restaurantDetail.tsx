@@ -1,9 +1,7 @@
-import React, { useState, useEffect } from 'react';
+import React from 'react';
 import ReservationForm from '../../components/reservationForm';
-import { useParams } from 'react-router-dom';
-
 export default function RestaurantDetailPage() {
-    const {restaurantId} = useParams();
+
     
     return (
     <>

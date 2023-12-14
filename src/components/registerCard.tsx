@@ -41,15 +41,19 @@ const RegisterCard: React.FC = () => {
           navigate('/login');
         }
       }).catch((err) => {
-
+        console.log(err);
       });
     } else {
-      restaurantRegister(restaurantName, email, password).then((res) => {
+      restaurantRegister(restaurantName, email, password, openTime, 
+        closeTime, restaurantType, priceRange).then((res) => {
         if (res.status === 200) {
           navigate('/login');
         }
       }).catch((err) => {
-
+        if(err.response.status === 400){
+          snackbar(err.response.data, 'error');
+        }
+        console.log(err);
       });
     }
     console.log(email, username, restaurantName, password, registerType);

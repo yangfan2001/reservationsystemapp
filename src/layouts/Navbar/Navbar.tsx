@@ -6,13 +6,16 @@ import Typography from '@mui/material/Typography';
 import Button from '@mui/material/Button';
 import IconButton from '@mui/material/IconButton';
 import MenuIcon from '@mui/icons-material/Menu';
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
+import LinkIcon from '@mui/icons-material/Link';
 import constants from "../../constants";
 import Dialog from "@mui/material/Dialog";
 import DialogActions from "@mui/material/DialogActions";
 import DialogContent from "@mui/material/DialogContent";
 import DialogContentText from "@mui/material/DialogContentText";
 import { blueGrey } from "@mui/material/colors";
+import PersonIcon from '@mui/icons-material/Person';
+
 
 export default function ButtonAppBar() {
   const navigate = useNavigate();
@@ -43,13 +46,51 @@ export default function ButtonAppBar() {
           <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
             New York Restaurant Reservation System
           </Typography>
+
+
+          {role === "restuaurant" && (
+            <Box sx={{ display: 'flex', alignItems: 'center', marginLeft: 30 }}>
+            <IconButton color="inherit" component={Link} to="/admin">
+              <LinkIcon sx={{ ml: 1, mr: 1 }} />
+              <Typography variant="body1" color="inherit" component={Link} to="/admin" sx={{ textDecoration: 'none' }}>
+                Manage Page
+              </Typography>
+            </IconButton>
+          </Box>
+          )}
+
+{role === "customer" && (
+            <Box sx={{ display: 'flex', alignItems: 'center', marginLeft: 30 }}>
+            <IconButton color="inherit" component={Link} to="/user">
+              <PersonIcon sx={{ ml: 1, mr: 1 }} />
+              <Typography variant="body1" color="inherit" component={Link} to="/user" sx={{ textDecoration: 'none' }}>
+               User
+              </Typography>
+            </IconButton>
+          </Box>
+          )}
+
+
+
+{role === "customer" && (
+            <Box>
+            <IconButton color="inherit" component={Link} to="/restaurants">
+              <LinkIcon sx={{ ml: 1, mr: 1 }} />
+              <Typography variant="body1" color="inherit" component={Link} to="/restaurants" sx={{ textDecoration: 'none' }}>
+                Restuarants
+              </Typography>
+            </IconButton>
+          </Box>
+          )}
+
+
+
           {role ? (
             <>
-
-              <Typography variant="h6" component="div" >
-                {role}
-              </Typography>
               <Button color="inherit" onClick={() => setOpenDialog(true)}>
+                <Typography variant="body2" component="div" sx={{ ml: 1, mr: 1 }}>
+                  {role}
+                </Typography>
                 Log Out
               </Button>
             </>

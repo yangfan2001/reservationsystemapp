@@ -1,85 +1,150 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
-  Box,
-  Typography,
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableRow,
-  Button,
-  Paper,
+  Box, Button, Dialog, DialogActions, DialogContent,
+  DialogTitle, TextField, Grid, Typography, Paper, MenuItem
+  , DialogContentText, Link
 } from '@mui/material';
+import { getReservationList } from '../../services/api/reservation';
+import DataTable from '../../components/dataTable';
+import { cancelReservation } from '../../services/api/reservation';
+import { useSnackbar } from '../../components/SnackbarProvier';
+import { blueGrey } from '@mui/material/colors';
+import dayjs from 'dayjs';
 
 // Define the types for user data and reservations
-type UserData = {
-  id: number;
-  name: string;
-  email: string;
-};
+
 
 type Reservation = {
   id: number;
-  restaurantName: string;
-  date: string;
-  canCancel: boolean; // Indicates whether the reservation can be canceled
+  tableId: number;
+  time: string;
+  status: string;
+  restauarntId: number;
+
 };
 
-type UserInfoProps = {
-  user: UserData;
-  reservations: Reservation[];
-  onCancelReservation: (reservationId: number) => void; // Function to call when canceling a reservation
-};
+interface Column {
+  field: string;
+  headerName: string;
+  width: number;
+  renderCell?: (params: any) => JSX.Element;
+}
 
-const UserInfo: React.FC<UserInfoProps> = ({ user, reservations, onCancelReservation }) => {
+const UserInfo = () => {
   // State to track if a cancellation is in progress
-  const [isCancelling, setIsCancelling] = useState<boolean>(false);
+  const [reservations, setReservations] = useState<Reservation[]>([]);
+  const [toRemoveReservationId, setToRemoveReservationId] = useState<number>(0);
+  const [isConfirmDialogOpen, setIsConfirmDialogOpen] = useState(false);
+  const showSnackbar = useSnackbar();
 
-  const handleCancelClick = (reservationId: number) => {
-    setIsCancelling(true);
-    onCancelReservation(reservationId);
-    // Here you would usually call an API to cancel the reservation
-    // After the API call, set `isCancelling` back to false
+  const onCancelReservation = (reservationId: number) => {
+
   };
 
-  return (
-    <Box>
-      <Typography variant="h5">User Information</Typography>
-      <Typography variant="body1">Name: {user.name}</Typography>
-      <Typography variant="body1">Email: {user.email}</Typography>
+  const handleCancelReservation = (reservationId: number) => {
+    console.log("cancel reservation", reservationId);
+    setToRemoveReservationId(reservationId);
+    setIsConfirmDialogOpen(true);
+  }
+  const handleConfirmDialog = async () => {
+    setIsConfirmDialogOpen(false);
+    await cancelReservation(toRemoveReservationId).then((res) => {
+      // refresh the page
+      if (res.status === 200) {
+        showSnackbar('Cancel reservation successfully', 'success');
+        window.location.reload();
 
-      <Typography variant="h6" sx={{ mt: 2 }}>
-        Past Reservations
+      } else {
+        showSnackbar('Cancel reservation failed', 'error');
+      }
+    }).catch((err) => {
+      showSnackbar('Server Error', 'error');
+    });
+  }
+
+  const reservationColumns: Column[] = [
+    { field: 'tableId', headerName: 'Table ID', width: 80 },
+    {
+      field: 'time', headerName: 'Time', width: 150,
+      renderCell: (params) => {
+        const formattedTime = dayjs(params.row.time).format('YYYY-MM-DD HH:mm:ss');
+        return <span>{formattedTime}</span>;
+      }
+    },
+    { field: 'status', headerName: 'Status', width: 150 },
+    {
+      field: 'restauarntId', headerName: 'Restaurant', width: 150,
+      renderCell: (params) => {
+        return <Link href={`/restaurant/${params.row.restauarntId}`}>View</Link>
+      }
+    },
+    {
+      field: 'actions', headerName: 'Actions', width: 150,
+      renderCell: (params) => {
+        if (params.row.status === "PENDING" || params.row.status === "NO SHOW") {
+          return <Button onClick={() => handleCancelReservation(params.row.id)}>Cancel</Button>
+        } else {
+          return <></>
+        }
+      }
+    },
+
+  ];
+
+  useEffect(() => {
+    getReservationList().then((res) => {
+      const allReservations = res.data
+      const tmp = []
+      for (let reservation of allReservations) {
+        tmp.push({
+          id: reservation.reservationId,
+          tableId: reservation.tableId,
+          time: reservation.reservationTime,
+          status: reservation.status,
+          restauarntId: reservation.restaurantId
+        })
+      }
+      setReservations(tmp)
+    });
+  }, []);
+
+  return (
+    <Box sx={{ p: 4 }}>
+
+      <Typography variant="h5" sx={{ mb: 2, color: blueGrey[700], fontWeight: 'bold' }}> {/* 增加边距、颜色和字体加粗 */}
+        User Past Reservations
       </Typography>
-      <Table component={Paper}>
-        <TableHead>
-          <TableRow>
-            <TableCell>Restaurant</TableCell>
-            <TableCell>Date</TableCell>
-            <TableCell>Cancel Reservation</TableCell>
-          </TableRow>
-        </TableHead>
-        <TableBody>
-          {reservations.map((reservation) => (
-            <TableRow key={reservation.id}>
-              <TableCell>{reservation.restaurantName}</TableCell>
-              <TableCell>{reservation.date}</TableCell>
-              <TableCell>
-                {reservation.canCancel && (
-                  <Button
-                    variant="outlined"
-                    color="error"
-                    onClick={() => handleCancelClick(reservation.id)}
-                    disabled={isCancelling}
-                  >
-                    Cancel
-                  </Button>
-                )}
-              </TableCell>
-            </TableRow>
-          ))}
-        </TableBody>
-      </Table>
+      <DataTable rows={reservations} columns={reservationColumns} />
+
+
+      <Dialog open={isConfirmDialogOpen} onClose={() => setIsConfirmDialogOpen(false)}>
+        <DialogContent sx={{ bgcolor: blueGrey[50], pt: 3 }}>
+          <DialogContentText sx={{ color: blueGrey[700], textAlign: "center" }}>
+            Are are sure you want to cancel this reservation?
+          </DialogContentText>
+        </DialogContent>
+        <DialogActions
+          sx={{
+            bgcolor: blueGrey[50],
+            justifyContent: "space-between",
+            padding: "8px 24px",
+          }}
+        >
+          <Button
+            onClick={() => setIsConfirmDialogOpen(false)}
+            sx={{ color: blueGrey[600], fontWeight: "bold" }}
+          >
+            Cancel
+          </Button>
+          <Button
+            onClick={handleConfirmDialog}
+            sx={{ color: blueGrey[800], fontWeight: "bold" }}
+            autoFocus
+          >
+            Confirm
+          </Button>
+        </DialogActions>
+      </Dialog>
     </Box>
   );
 };

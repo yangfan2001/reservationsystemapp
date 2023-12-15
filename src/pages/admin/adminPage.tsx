@@ -8,7 +8,7 @@ import DataTable from "../../components/dataTable";
 import { getRestaurantTables, deleteRestaurantTable, addRestaurantTable } from "../../services/api/restaurantTable";
 import { useSnackbar } from "../../components/SnackbarProvier";
 import { blueGrey } from "@mui/material/colors";
-import { getReservationsByRestaurantId } from "../../services/api/reservation";
+import { getReservationsByRestaurantId, cancelReservation } from "../../services/api/reservation";
 import dayjs from 'dayjs';
 import { Cancel } from "@mui/icons-material";
 
@@ -91,10 +91,10 @@ export default function AdminPage() {
     setIsAddDialogOpen(false);
   }
 
-  const handleConfirmDialog = () => {
+  const handleConfirmDialog = async() => {
     if (confirmDialogType === "removeTable") {
       console.log("remove table", toRemoveTableId);
-      deleteRestaurantTable(toRemoveTableId).then((res) => {
+      await deleteRestaurantTable(toRemoveTableId).then((res) => {
         showSnackbar("Delete table successfully", "success");
         const tmp = tables.filter((table) => table.id !== toRemoveTableId);
         setTables(tmp);
@@ -108,6 +108,18 @@ export default function AdminPage() {
       })
     }else if (confirmDialogType === "cancelReservation") {
       console.log("cancel reservation", toRemoveReservationId);
+      await cancelReservation(toRemoveReservationId).then((res) => {
+        showSnackbar("Cancel reservation successfully", "success");
+       // reload the page
+        window.location.reload();
+      }).catch((err) => {
+        console.log(err);
+        if (err.message) {
+          showSnackbar("error", err.message); 
+        } else {
+          showSnackbar("Server Error", "error",);
+        }
+      });
       // ... cancel reservation logic
     }
     setIsConfirmDialogOpen(false)

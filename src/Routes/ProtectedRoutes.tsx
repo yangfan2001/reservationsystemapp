@@ -1,6 +1,7 @@
 import React, { ReactNode, useEffect, useState } from 'react';
 import { useLocation } from 'react-router-dom';
 import { useSnackbar } from '../components/SnackbarProvier';
+import { clear } from 'console';
 
 interface ProtectedRouteProps {
     children: ReactNode;
@@ -16,6 +17,7 @@ const ProtectedRoute: React.FC<ProtectedRouteProps> = ({ children }) => {
 
     const handleError = () =>{
         snackbar('You are not authorized to access this page','error');
+        sessionStorage.clear();
         window.location.href = '/login'
     }
     useEffect(() => {

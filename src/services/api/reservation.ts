@@ -22,3 +22,11 @@ export const createReservation = (party_size:String, reservation_date:String, re
 export const getReservationsByRestaurantId = () => {
     return axiosInstance.get(`${constants.RESERVATION_ENDPOINT_URL}/list-by-restaurant`);
 }
+
+export const cancelReservation = (reservation_id:Number) => {
+    return axiosInstance.post(`${constants.RESERVATION_ENDPOINT_URL}/cancel/${reservation_id }`);
+}
+
+export const getReservationList = ()=>{
+    return axiosInstance.get(`${constants.RESERVATION_ENDPOINT_URL}/list`);
+}

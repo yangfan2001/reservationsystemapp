@@ -7,7 +7,7 @@ import AdminPage from '../pages/admin/adminPage';
 import RestaurantPage from '../pages/Restaurant/restaurantList';
 import ProtectedRoute from './ProtectedRoutes';
 import RestaurantDetailPage from '../pages/Restaurant/restaurantDetail';
-
+import UserInfo from '../pages/user/userInfo';
 const AllRoutes: React.FC = () => {
     return (
         <Routes>
@@ -32,6 +32,12 @@ const AllRoutes: React.FC = () => {
             <Route path="/restaurant/:restaurantId" element={
                 <ProtectedRoute>
                     <RestaurantDetailPage />
+                </ProtectedRoute>
+            } />
+
+<Route path="/user" element={
+                <ProtectedRoute>
+                    <UserInfo />
                 </ProtectedRoute>
             } />
 

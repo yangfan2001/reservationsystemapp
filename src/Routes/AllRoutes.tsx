@@ -29,7 +29,7 @@ const AllRoutes: React.FC = () => {
                 </ProtectedRoute>
             } />
 
-            <Route path="/restaurant/:restaurantId" element={
+            <Route path="/restaurant" element={
                 <ProtectedRoute>
                     <RestaurantDetailPage />
                 </ProtectedRoute>

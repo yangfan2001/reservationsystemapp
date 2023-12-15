@@ -1,10 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import { GridRenderCellParams } from '@mui/x-data-grid';
-import { Container, Link } from '@mui/material';
+import { Container} from '@mui/material';
+import { Link } from 'react-router-dom';
 import DataTable from '../../components/dataTable';
 import {
     getAllRestaurants
 } from '../../services/api/restaurant';
+import { useNavigate } from 'react-router-dom';
 const columns = [
     {
         field: 'name',
@@ -12,8 +14,8 @@ const columns = [
         width: 300,
         renderCell: (params: GridRenderCellParams) => {
             return (
-                <Link href={`/restaurant/${params.id}`}>
-                    {params.value as string}
+                <Link to={"/restaurant"} state={{restaurantId:params.id}}>
+                    {params.value}
                 </Link>
             );
         }
@@ -36,6 +38,8 @@ type RestaurantListRowType = {
 }
 export default function RestaurantList() {
     const [restaurants, setRestaurants] = useState<RestaurantListRowType[]>([]);
+    const navigate = useNavigate();
+
     useEffect(() => {
         const fetchData = async () => {
             try {

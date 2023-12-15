@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import {
   Box, Button, Dialog, DialogActions, DialogContent,
   DialogTitle, TextField, Grid, Typography, Paper, MenuItem
-  , DialogContentText, Link
+  , DialogContentText
 } from '@mui/material';
 import { getReservationList } from '../../services/api/reservation';
 import DataTable from '../../components/dataTable';
@@ -10,6 +10,7 @@ import { cancelReservation } from '../../services/api/reservation';
 import { useSnackbar } from '../../components/SnackbarProvier';
 import { blueGrey } from '@mui/material/colors';
 import dayjs from 'dayjs';
+import { Link } from 'react-router-dom';
 
 // Define the types for user data and reservations
 
@@ -58,6 +59,7 @@ const UserInfo = () => {
         showSnackbar('Cancel reservation failed', 'error');
       }
     }).catch((err) => {
+      console.log(err);
       showSnackbar('Server Error', 'error');
     });
   }
@@ -75,8 +77,9 @@ const UserInfo = () => {
     {
       field: 'restauarntId', headerName: 'Restaurant', width: 150,
       renderCell: (params) => {
-        return <Link href={`/restaurant/${params.row.restauarntId}`}>View</Link>
+        return <Link to={"/restaurant"} state={{restaurantId:params.row.restauarntId}}>View</Link>
       }
+      
     },
     {
       field: 'actions', headerName: 'Actions', width: 150,

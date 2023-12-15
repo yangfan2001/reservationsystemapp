@@ -19,7 +19,7 @@ import { useSnackbar } from './SnackbarProvier';
 import { useParams } from 'react-router-dom';
 import { getRestaurantById } from '../services/api/restaurant';
 import { validateReservation, createReservation } from '../services/api/reservation';
-
+import { useLocation } from 'react-router-dom';
 function generateTimeOptions(openTime:String, closeTime:String) {
   const openingTime = dayjs(`2023-01-01 ${openTime}`);
   const closingTime = dayjs(`2023-01-01 ${closeTime}`);
@@ -46,7 +46,7 @@ export default function ReservationForm() {
   const [date, setDate] = useState<Dayjs | null>(dayjs());
   const [time, setTime] = useState('');
   const snackbar = useSnackbar();
-  const {restaurantId} = useParams();
+  const {restaurantId} = useLocation().state as any;
   const [restaurant, setRestaurant] = useState<any>();
   const [timeOptions, setTimeOptions] = useState<string[]>([]);
 

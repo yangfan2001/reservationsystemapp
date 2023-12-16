@@ -1,4 +1,4 @@
-const ENDPOINT_URL =  '/api'
+const ENDPOINT_URL =  'http://localhost:9999/api'
 
 export default {
     ENDPOINT_URL: ENDPOINT_URL,

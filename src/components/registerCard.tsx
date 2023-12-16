@@ -34,13 +34,18 @@ const RegisterCard: React.FC = () => {
   const snackbar = useSnackbar();
 
   const handleRegister = (event: React.FormEvent) => {
-    event.preventDefault(); // 阻止默认表单提交行为
+    event.preventDefault();
     if (registerType === 'customer') {
       userRegister(username, email, password).then((res) => {
         if (res.status === 200) {
           navigate('/login');
         }
       }).catch((err) => {
+        if(err.response.data){
+          snackbar(err.response.data, 'error');
+        }else{
+          snackbar('Something went wrong', 'error');
+        }
         console.log(err);
       });
     } else {
@@ -50,8 +55,10 @@ const RegisterCard: React.FC = () => {
           navigate('/login');
         }
       }).catch((err) => {
-        if(err.response.status === 400){
+        if(err.response.data){
           snackbar(err.response.data, 'error');
+        }else{
+          snackbar('Something went wrong', 'error');
         }
         console.log(err);
       });

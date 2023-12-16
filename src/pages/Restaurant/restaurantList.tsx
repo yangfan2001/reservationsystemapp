@@ -41,6 +41,9 @@ export default function RestaurantList() {
     const navigate = useNavigate();
 
     useEffect(() => {
+        if(!sessionStorage.getItem('token')){
+            navigate('/login');
+        }
         const fetchData = async () => {
             try {
                 const res = await getAllRestaurants();

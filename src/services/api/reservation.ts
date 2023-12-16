@@ -27,6 +27,10 @@ export const cancelReservation = (reservation_id:Number) => {
     return axiosInstance.post(`${constants.RESERVATION_ENDPOINT_URL}/cancel/${reservation_id }`);
 }
 
+export const confirmReservation = (reservation_id:Number) => {
+    return axiosInstance.post(`${constants.RESERVATION_ENDPOINT_URL}/confirm/${reservation_id }`);
+}
+
 export const getReservationList = ()=>{
     return axiosInstance.get(`${constants.RESERVATION_ENDPOINT_URL}/list`);
 }

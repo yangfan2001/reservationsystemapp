@@ -10,8 +10,7 @@ import { useSnackbar } from "../../components/SnackbarProvier";
 import { blueGrey } from "@mui/material/colors";
 import { getReservationsByRestaurantId, cancelReservation } from "../../services/api/reservation";
 import dayjs from 'dayjs';
-import { Cancel } from "@mui/icons-material";
-
+import { confirmReservation } from "../../services/api/reservation";
 
 interface Table {
   id: number;
@@ -48,7 +47,7 @@ export default function AdminPage() {
   const [confirmDialogText, setConfirmDialogText] = useState("");
   const [toRemoveTableId, setToRemoveTableId] = useState<number>(0);
   const [toRemoveReservationId, setToRemoveReservationId] = useState<number>(0);
-
+  const [toConfirmReservationId, setToConfirmReservationId] = useState<number>(0);
 
 
   const handleTableSizeChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -121,6 +120,21 @@ export default function AdminPage() {
         }
       });
       // ... cancel reservation logic
+    }else if (confirmDialogType === "confirmReservation") {
+      console.log("confirm reservation", toConfirmReservationId);
+      await confirmReservation(toConfirmReservationId).then((res) => {
+        showSnackbar("Confirm reservation successfully", "success");
+        // reload the page
+        window.location.reload();
+      }).catch((err) => {
+        console.log(err);
+        if (err.message) {
+          showSnackbar("error", err.message);
+        } else {
+          showSnackbar("Server Error", "error",);
+        }
+      });
+      // ... confirm reservation logic
     }
     setIsConfirmDialogOpen(false)
   }
@@ -130,6 +144,14 @@ export default function AdminPage() {
     setToRemoveReservationId(reservationId);
     setConfirmDialogType("cancelReservation");
     setConfirmDialogText("Are you sure you want to cancel this reservation?");
+    setIsConfirmDialogOpen(true);
+  }
+
+  const handleConfirmReservation = (reservationId: number) => {
+    console.log("confirm reservation", reservationId);
+    setToConfirmReservationId(reservationId);
+    setConfirmDialogType("confirmReservation");
+    setConfirmDialogText("Are you sure you want to confirm this reservation?");
     setIsConfirmDialogOpen(true);
   }
 
@@ -157,11 +179,24 @@ export default function AdminPage() {
       const formattedTime = dayjs(params.row.time).format('YYYY-MM-DD HH:mm:ss');
       return <span>{formattedTime}</span>;
     } },
-    { field: 'status', headerName: 'Status', width: 150 },
-    { field: 'actions', headerName: 'Actions', width: 150, 
+    { field: 'status', headerName: 'Status', width: 120 },
+    { field: 'actions', headerName: 'Actions', width: 200, 
     renderCell: (params) => {
       if (params.row.status === "PENDING" || params.row.status === "NO SHOW") {
-        return <Button onClick={() => handleCancelReservation(params.row.id)}>Cancel</Button>
+        return <>
+        <Button 
+        size={"small"}
+        variant="outlined"
+        color="error"
+        onClick={() => handleCancelReservation(params.row.id)}>
+          Cancel
+          </Button>
+        <Button 
+         size={"small"}
+        variant="outlined"
+        color="success"
+        onClick={() => handleConfirmReservation(params.row.id)}>Confirm</Button>
+        </>
       } else {
         return <></>
       }
